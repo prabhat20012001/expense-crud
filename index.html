@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="form">
+        <label for="expense"> Choose expense amount:</label>
+        <input type="number" id="expense" name="expense"></input>
+        <label for="description"> Choose description:</label>
+        <input type="text" id="description" name="description"></input>
+        <label for "category"> Choose a category:</label>
+        <select id="category" name="category">
+            <option value="fuel">Fuel</option>
+            <option value="food">food</option>
+            <option value="electricity">electricity</option>
+            <option value="movie">movie</option>
+        </select>
+        <input type="submit" value="Add Expense">
+    </form>
+    <div id="expense-box">
+        <ul id="expenseul"></ul>
+    </div>
+    <script>
+        const form = document.getElementById('form');
+        const expenseBox = document.getElementById('expenseul');
+        const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+        form.addEventListener("submit", addExpense);
+
+        function addExpense(e) {
+            e.preventDefault();
+            var expenseValue = document.getElementById("expense").value;
+            var descriptionValue = document.getElementById("description").value;
+            var categoryValue = document.getElementById("category").value;
+
+            var expense = {
+                expenseValue,
+                descriptionValue,
+                categoryValue
+            };
+            expenses.push(expense);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            renderExpenses();
+
+            form.reset(); // Clear the form fields after adding an expense
+        }
+
+        function renderExpenses() {
+            expenseBox.innerHTML = ''; // Clear the previous list
+            for (const expense of expenses) {
+                var li = document.createElement("li");
+                var expenseSpan = document.createElement("span");
+                var descriptionSpan = document.createElement("span");
+                var categorySpan = document.createElement("span");
+                var editButton = document.createElement("button");
+                var deleteButton = document.createElement("button");
+
+                expenseSpan.textContent = `Expense: ${expense.expenseValue} `;
+                descriptionSpan.textContent = `Description: ${expense.descriptionValue} `;
+                categorySpan.textContent = `Category: ${expense.categoryValue} `;
+                editButton.textContent = "Edit";
+                deleteButton.textContent = "Delete";
+
+                li.appendChild(expenseSpan);
+                li.appendChild(descriptionSpan);
+                li.appendChild(categorySpan);
+                li.appendChild(editButton);
+                li.appendChild(deleteButton);
+
+                expenseBox.appendChild(li);
+
+                editButton.addEventListener("click", function () {
+                    // Replace the text content of the expense, description, and category with input fields for editing
+                    expenseSpan.innerHTML = `Expense: <input type="number" id="editExpense" value="${expense.expenseValue}">`;
+                    descriptionSpan.innerHTML = `Description: <input type="text" id="editDescription" value="${expense.descriptionValue}">`;
+                    categorySpan.innerHTML = `Category: <select id="editCategory">
+                        <option value="fuel">Fuel</option>
+                        <option value="food">food</option>
+                        <option value="electricity">electricity</option>
+                        <option value="movie">movie</option>
+                    </select>`;
+                    const editCategory = categorySpan.querySelector("#editCategory");
+                    editCategory.value = expense.categoryValue;
+
+                    // Replace the "Edit" button with a "Save" button
+                    li.removeChild(editButton);
+                    var saveButton = document.createElement("button");
+                    saveButton.textContent = "Save";
+                    li.appendChild(saveButton);
+
+                    saveButton.addEventListener("click", function () {
+                        // Update the edited values
+                        expense.expenseValue = document.getElementById("editExpense").value;
+                        expense.descriptionValue = document.getElementById("editDescription").value;
+                        expense.categoryValue = editCategory.value;
+
+                        // Update the display
+                        expenseSpan.innerHTML = `Expense: ${expense.expenseValue}`;
+                        descriptionSpan.innerHTML = `Description: ${expense.descriptionValue}`;
+                        categorySpan.innerHTML = `Category: ${expense.categoryValue}`;
+
+                        // Replace the "Save" button with the "Edit" button
+                        li.removeChild(saveButton);
+                        li.appendChild(editButton);
+
+                        localStorage.setItem('expenses', JSON.stringify(expenses));
+                    });
+                });
+
+                deleteButton.addEventListener("click", function () {
+                    // Remove the expense from the array and re-render the list
+                    expenses.splice(expenses.indexOf(expense), 1);
+                    localStorage.setItem('expenses', JSON.stringify(expenses));
+                    renderExpenses();
+                });
+            }
+        }
+
+        renderExpenses(); // Load and render saved expenses on page load
+    </script>
+</body>
+</html>
