@@ -7,18 +7,18 @@
 </head>
 <body>
     <form id="form">
-        <label for="expense"> Choose expense amount:</label>
+        <label for="expense"> Selling Price:</label>
         <input type="number" id="expense" name="expense"></input>
-        <label for="description"> Choose description:</label>
+        <label for="description"> Product Name:</label>
         <input type="text" id="description" name="description"></input>
         <label for "category"> Choose a category:</label>
         <select id="category" name="category">
-            <option value="fuel">Fuel</option>
-            <option value="food">food</option>
-            <option value="electricity">electricity</option>
-            <option value="movie">movie</option>
+            <option value="fuel">Electronic Items:</option>
+            <option value="food">Food Items:</option>
+            <option value="electricity">Skincare Items:</option>
+            <!-- <option value="movie">movie</option> -->
         </select>
-        <input type="submit" value="Add Expense">
+        <input type="submit" value="Add Product">
     </form>
     <div id="expense-box">
         <ul id="expenseul"></ul>
@@ -58,7 +58,7 @@
                 var editButton = document.createElement("button");
                 var deleteButton = document.createElement("button");
 
-                expenseSpan.textContent = `Expense: ${expense.expenseValue} `;
+                expenseSpan.textContent = `Expense: ${expense.expenseValue}  `;
                 descriptionSpan.textContent = `Description: ${expense.descriptionValue} `;
                 categorySpan.textContent = `Category: ${expense.categoryValue} `;
                 editButton.textContent = "Edit";
